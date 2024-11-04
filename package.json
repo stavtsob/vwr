@@ -1,8 +1,8 @@
 {
-  "name": "vwr",
-  "version": "1.0.0",
+  "name": "vwr-vuejs",
+  "version": "1.0.1",
   "description": "VWR is an innovative data-fetching and caching library designed for Vue.js, serving as an alternative to SWR (Stale-While-Revalidate) commonly used in React.",
-  "main": "index.js",
+  "main": "vwr.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
