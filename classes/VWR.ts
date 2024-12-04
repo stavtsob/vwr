@@ -16,6 +16,7 @@ export default class VWR<T> {
         this.Error = ref(null);
         this.Data = ref<T>();
         this.timerID = -1;
+        this.Loading = ref(false);
         // If there is an option for periodic revalidation
         if(this.Options.RevalidateInterval) {
             this.timerID = setInterval(async () => {
