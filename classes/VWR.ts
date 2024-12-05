@@ -1,4 +1,4 @@
-import { ref, Ref } from "vue"
+import { ref, type Ref } from "vue"
 import VWROptions from "./VWROptions"
 
 export default class VWR<T> {

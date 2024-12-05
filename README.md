@@ -27,7 +27,7 @@ const useVWR = <T>(
 
 ### Parameters
 
-- **`key: string`**: A unique identifier for the data request, ensuring proper caching and reuse.
+- **`key: string`**: A unique identifier for the data request, ensuring proper caching and reuse. Usually the exact URL of the fetcher.
 - **`fetcher: Function`**: A function that performs data fetching. It should ideally be asynchronous and return the data to be cached.
 - **`options: VWROptions` (optional)**: Configuration options for the hook.
 
@@ -38,28 +38,20 @@ const useVWR = <T>(
 ## Example
 
 ```typescript
-const fetchUserData = async (userId: string) => {
-    const response = await fetch(`/api/users/${userId}`);
-    return response.json();
+const userId = "123";
+const fetchUserData = async () => {
+  const response = await fetch(`/api/users/${userId}`);
+  return response.json();
 };
-
-const MyComponent = () => {
-    const userId = '123';
-    const userData = useVWR(userId, fetchUserData, {
-        RevalidateInterval: 5000, // revalidate every 5 seconds
-        ErrorCallback: (error) => console.error('Fetch failed:', error)
-    });
-
-    return (
-        <div>
-            {userData ? (
-                <div>User Name: {userData.name}</div>
-            ) : (
-                <div>Loading...</div>
-            )}
-        </div>
-    );
-};
+// useVWR(key, fetcher, options (optional))
+const {
+  data: userData,
+  error,
+  isLoading,
+} = useVWR(`/api/users/${userId}`, fetchUserData, {
+  RevalidateInterval: 5000, // revalidate every 5 seconds
+  ErrorCallback: (error) => console.error("Fetch failed:", error),
+});
 ```
 
 ## Configuration Options (`VWROptions`)
@@ -68,8 +60,8 @@ The `VWROptions` class provides additional options for customizing the behavior 
 
 ```typescript
 export default class VWROptions {
-    RevalidateInterval?: number; // Time interval (in milliseconds) for revalidating the data.
-    ErrorCallback?: Function; // Callback function to handle errors during the fetch.
+  RevalidateInterval?: number; // Time interval (in milliseconds) for revalidating the data.
+  ErrorCallback?: Function; // Callback function to handle errors during the fetch.
 }
 ```
 
@@ -85,6 +77,10 @@ export default class VWROptions {
 - If not, it initializes a new data request using `initVWR<T>(key, fetcher, options)`.
 
 ## Functions
+
+### `useVWR<T>(key: string, fetcher: Function, options: VWROptions)`
+
+- If the VWR key exists, reuse the old VWR. If it doesn't exist, initiallize a new VWR.
 
 ### `vwrExists(key: string)`
 
