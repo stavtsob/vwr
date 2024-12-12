@@ -19,19 +19,16 @@ const reuseVWR = <T>(key: string, fetcher: Function, options: VWROptions = {}): 
         vwr.Error = oldVwr.Error;
         vwr.Loading = oldVwr.Loading;
 
-        // Optionally, manually trigger any necessary updates in the newVwr
-        if (!vwr.Loading) {
-            vwr.triggerRevalidateCallback(vwr.rawData);
-        }
+        vwr.triggerRevalidateCallback(vwr.rawData);
+        vwrMemory.value[key] = vwr;
+        oldVwr.destroy();
     };
-    if(oldVwr.Loading) {
+    if(oldVwr.Loading.value) {
         oldVwr.Options = { 
             RevalidateCallback: applyOldRevalidationResults
         } as VWROptions;
     } 
-    vwr.triggerRevalidateCallback(vwr.rawData);
-    vwrMemory.value[key] = vwr;
-    oldVwr.destroy();
+
     return {
         data:  vwr.Data,
         error: vwr.Error,
