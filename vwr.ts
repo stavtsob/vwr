@@ -13,21 +13,18 @@ const reuseVWR = <T>(key: string, fetcher: Function, options: VWROptions = {}): 
     vwr.rawData = oldVwr.rawData;
     
     // Function to apply results from oldVwr to newVwr
-    const applyOldRevalidationResults = () => {
-        vwr.Data.value = oldVwr.rawData;
-        vwr.rawData = oldVwr.rawData;
+    const applyOldRevalidationResults = (data: any) => {
+        vwr.Data.value = data;
+        vwr.rawData = data;
         vwr.Error = oldVwr.Error;
-        vwr.Loading = oldVwr.Loading;
-
-        vwr.triggerRevalidateCallback(vwr.rawData);
+        vwr.Loading.value = true;
         vwrMemory.value[key] = vwr;
+        vwr.triggerRevalidateCallback(vwr.rawData);
+        vwr.Loading.value = false;
         oldVwr.destroy();
     };
-    if(oldVwr.Loading.value) {
-        oldVwr.Options = { 
-            RevalidateCallback: applyOldRevalidationResults
-        } as VWROptions;
-    } 
+    oldVwr.Options?.RevalidateCallbacks?.push(applyOldRevalidationResults)
+
 
     return {
         data:  vwr.Data,
@@ -63,4 +60,8 @@ const useVWR = <T>(key: string, fetcher: Function, options: VWROptions = {}): VW
     return initVWR<T>(key, fetcher, options);
 }
 
-export {useVWR};
+const revalidateVWR = (key: string) => {
+    vwrMemory.value[key].revalidate();
+}
+
+export {useVWR, revalidateVWR};

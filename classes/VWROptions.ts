@@ -1,5 +1,7 @@
+import { RevalidateCallback } from "./RevalidateCallback"
+
 export default class VWROptions {
     RevalidateInterval?: number
-    RevalidateCallback?:    Function
+    RevalidateCallbacks?:    RevalidateCallback[]
     ErrorCallback?: Function
 }

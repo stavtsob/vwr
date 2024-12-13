@@ -1,5 +1,6 @@
 import { ref, type Ref } from "vue"
 import VWROptions from "./VWROptions"
+import { RevalidateCallback } from "./RevalidateCallback"
 
 export default class VWR<T> {
     Data: Ref<T | undefined> // Keeps the fetched data
@@ -17,6 +18,7 @@ export default class VWR<T> {
         this.Data = ref<T>();
         this.timerID = -1;
         this.Loading = ref(false);
+        this.Options.RevalidateCallbacks = [];
         // If there is an option for periodic revalidation
         if(this.Options.RevalidateInterval) {
             this.timerID = setInterval(async () => {
@@ -44,8 +46,11 @@ export default class VWR<T> {
 
     triggerRevalidateCallback = (data: any) => {
         if(!this.Options) return
-        if(this.Options?.RevalidateCallback) {
-            this.Options.RevalidateCallback(data);
+        if(this.Options?.RevalidateCallbacks) {
+            const callbacks = this.Options.RevalidateCallbacks;
+            callbacks.forEach((callback: RevalidateCallback) => {
+                callback(data);
+            })
         }
     }
 
